@@ -17,7 +17,7 @@ def main(argv):
         if opt in ("-v", "--version"):
            print ("Name: " + name, "\nVersion: " + version)  
         elif opt in ("-h", "--help"):
-            print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of the output file that will be created\n -v or --version to see the name and version of the tool\n")
+            print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of a specific directory you would like to output to (it must be an existing valid directory).\n -v or --version to see the name and version of the tool\n")
         elif opt in ("-i", "--input"):
             input = arg
         elif opt in ("-o", "--output"):
