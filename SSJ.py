@@ -31,9 +31,10 @@ class SSJ:
         titleQuestionMark = True
         try:
             if inputFolder is None:
-                file = open(inputFile, "r")
+                file = open(inputFile, "r", encoding="utf8")
             else:
-                file = open(inputFolder + "/" + inputFile, "r")
+                file = open(inputFolder + "/" + inputFile, "r", encoding="utf8")
+            
             
             Lines = file.readlines()
         
@@ -97,6 +98,8 @@ class SSJ:
         print(self.defaultOutputFolder)
         #retrieve every txt file in dir omitting other dirs
         onlyfiles = [f for f in listdir(input) if isfile(join(input, f))]
+        
+        print(onlyfiles)
         
         for file in onlyfiles:
             if file.endswith(".txt"):
