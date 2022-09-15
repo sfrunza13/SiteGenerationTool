@@ -16,7 +16,7 @@ class SSJ:
   
 </body>
 </html>"""
-    pos = template.find(token) + len(token)
+    
     
     def __init__(self,input,output=None):
         self.input = input
@@ -27,7 +27,9 @@ class SSJ:
         
     
     def parseFile(self, inputFile, inputFolder = None):   
-        paragraphs = []     
+        paragraphs = []   
+        titleStorage = ""  
+        titleQuestionMark = True
         try:
             if inputFolder is None:
                 file = open(inputFile, "r")
@@ -36,27 +38,49 @@ class SSJ:
             
             Lines = file.readlines()
         
-            for line in Lines:
-                if line != "\n":
-                    newLine = "<p>" + line + "</p>"
-
-                    paragraphs.append(newLine)
+            for i, line in enumerate(Lines):
+                
+                if i == 0:
+                    titleStorage = line
+                elif i == 1 or i == 2:
+                    if line != "\n":
+                        titleQuestionMark = False
+                        newLine = "<p>" + titleStorage + "</p>"
+                        paragraphs.append(newLine)
+                        newLine = "<p>" + line + "</p>"
+                        paragraphs.append(newLine)
+                elif i == 3:
+                    if titleQuestionMark == True:
+                        newLine = "<h1>" + titleStorage + "</h1>"
+                        paragraphs.append(newLine)
+                        newLine = "<p>" + line + "</p>"
+                        paragraphs.append(newLine)
+                else:
+                    if line != "\n":
+                        newLine = "<p>" + line + "</p>"
+                        paragraphs.append(newLine)
             print (paragraphs)
             
             outputName = inputFile[:inputFile.find('.txt')] + '.html'
             
             print("new name:", outputName)
             
-            self.writeOut(outputName, self.defaultOutputFolder, paragraphs, self.pos)
+            self.writeOut(outputName, self.defaultOutputFolder, paragraphs, titleQuestionMark)
         except OSError as e:
             print("Error: " + str(e))
         
-    def writeOut(self, output, defaultOutputFolder, paragraphs, pos):    
+    def writeOut(self, output, defaultOutputFolder, paragraphs, title):    
         try:
             fileOut = open(defaultOutputFolder + "/" + output, "w")
             
             tempTemp = SSJ.template
             
+            if title:
+                # SSJ.template = SSJ.template[:SSJ.template.find("<title>") + len("<title>")] + paragraphs[0] + SSJ.template[SSJ.template.find("<title>") + len("<title>"):]
+                SSJ.template = SSJ.template.replace("Filename", paragraphs[0][4:-5])
+                
+            pos = SSJ.template.find(SSJ.token) + len(SSJ.token)    
+                
             for paragraph in reversed(paragraphs):
                 SSJ.template = SSJ.template[:pos] + paragraph + SSJ.template[pos:]
                 
