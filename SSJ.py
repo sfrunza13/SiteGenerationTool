@@ -39,25 +39,35 @@ class SSJ:
             Lines = file.readlines()
         
             for i, line in enumerate(Lines):
-                
+                #my logic doesnt work. I need it to be blank line delimiter.
                 if i == 0:
                     titleStorage = line
-                elif i == 1 or i == 2:
+                elif i == 1:
+                    if line != "\n":
+                        titleQuestionMark = False
+                        newLine = "<p>" + titleStorage 
+                        paragraphs.append(newLine)
+                        newLine =  line 
+                        paragraphs.append(newLine)
+                elif i == 2:
                     if line != "\n":
                         titleQuestionMark = False
                         newLine = "<p>" + titleStorage + "</p>"
                         paragraphs.append(newLine)
-                        newLine = "<p>" + line + "</p>"
+                        newLine = "<p>" + line 
                         paragraphs.append(newLine)
                 elif i == 3:
                     if titleQuestionMark == True:
                         newLine = "<h1>" + titleStorage + "</h1>"
                         paragraphs.append(newLine)
-                        newLine = "<p>" + line + "</p>"
+                        newLine = "<p>" + line 
                         paragraphs.append(newLine)
                 else:
-                    if line != "\n":
-                        newLine = "<p>" + line + "</p>"
+                    if line == "\n":
+                        newLine = "</p>" + "</p>"
+                        paragraphs.append(newLine)
+                    else:
+                        newLine = line
                         paragraphs.append(newLine)
             print (paragraphs)
             
