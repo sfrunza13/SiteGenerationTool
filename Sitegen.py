@@ -23,8 +23,11 @@ def main(argv):
         elif opt in ("-o", "--output"):
             output = arg 
     
-    SiteGen = SSJ(input)
-    
+    if 'output' in locals():
+        SiteGen = SSJ(input, output)
+    else:
+        SiteGen = SSJ(input)
+        
     try:
         shutil.rmtree(SiteGen.defaultOutputFolder)
         os.mkdir(SiteGen.defaultOutputFolder)

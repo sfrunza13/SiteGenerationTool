@@ -2,7 +2,6 @@ from os import listdir
 from os.path import isfile, join
 
 class SSJ:
-    defaultOutput = 'defaultOut.html'
     defaultOutputFolder = "./dist"
     token = "<body>"
     template = """<!doctype html>
@@ -21,7 +20,7 @@ class SSJ:
     def __init__(self,input,output=None):
         self.input = input
         if output is None:
-            self.output = 'defaultOut.html'
+            self.output = SSJ.defaultOutputFolder
         else:
             self.output = output
         
@@ -71,7 +70,8 @@ class SSJ:
         
     def writeOut(self, output, defaultOutputFolder, paragraphs, title):    
         try:
-            fileOut = open(defaultOutputFolder + "/" + output, "w")
+            if self.output:
+                fileOut = open(self.output + "/" + output, "w")   
             
             tempTemp = SSJ.template
             
