@@ -59,6 +59,8 @@ def main(argv):
         
         for paragraph in reversed(paragraphs):
             template = template[:pos] + paragraph + template[pos:]
+            
+        fileOut.write(template)
                                
     except OSError as err:
         print("Error: " + str(err))
