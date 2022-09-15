@@ -1,24 +1,10 @@
-import sys, getopt
+import sys, getopt, os, shutil
+from SSJ import SSJ
+from os.path import isdir
 
-def main(argv):
-    inputFile = ''
-    outputFile = 'defaultOut.txt'
-    outputFolder = "./dist"
+def main(argv):   
     name = "SSJ SSG the Super Saiyan Site Tool"
     version = "0.0.1"
-    token = "<body>"
-    template = """<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Filename</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-  
-</body>
-</html>"""
-    pos = template.find(token) + len(token)    
 
 
     try:
@@ -33,44 +19,26 @@ def main(argv):
         elif opt in ("-h", "--help"):
             print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of the output file that will be created\n -v or --version to see the name and version of the tool\n")
         elif opt in ("-i", "--input"):
-            inputFile = arg
+            input = arg
         elif opt in ("-o", "--output"):
-            outputFile = arg
-            
-    paragraphs = []        
-            
+            output = arg 
+    
+    SiteGen = SSJ(input)
+    
     try:
-        file = open(inputFile, "r")
-        
-        Lines = file.readlines()
-    
-        for line in Lines:
-            if line != "\n":
-                newLine = "<p>" + line + "</p>"
+        shutil.rmtree(SiteGen.defaultOutputFolder)
+        os.mkdir(SiteGen.defaultOutputFolder)
+    except OSError as error:
+        print(error)
 
-                paragraphs.append(newLine)
-        
-    except OSError as e:
-        print("Error: " + str(e))
-        
-        
-    try:
-        fileOut = open(outputFile, "w")
-        
-        for paragraph in reversed(paragraphs):
-            template = template[:pos] + paragraph + template[pos:]
-            
-        fileOut.write(template)
-                               
-    except OSError as err:
-        print("Error: " + str(err))
-    
+    if SiteGen.input.endswith(".txt"):
+        SiteGen.parseFile(input)
+    elif isdir(SiteGen.input):
+        SiteGen.parsePath(input)
 
-    print ("Input file: ", inputFile)
-    print ("Output file: ", outputFile)
-    print (template)
-    print (paragraphs)
-    
+    print ("Input option: ", SiteGen.input)
+    print ("Output option: ", SiteGen.output)
     
 if __name__ == "__main__":
    main(sys.argv[1:])
+   
