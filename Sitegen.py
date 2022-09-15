@@ -34,7 +34,7 @@ def main(argv):
     if SiteGen.input.endswith(".txt"):
         SiteGen.parseFile(input)
     elif isdir(SiteGen.input):
-        SiteGen.parsePath(input)
+        SiteGen.parseDir(input)
 
     print ("Input option: ", SiteGen.input)
     print ("Output option: ", SiteGen.output)

@@ -67,7 +67,7 @@ class SSJ:
             print("Error: " + str(err)) 
         
         
-    def parsePath(self, input):
+    def parseDir(self, input):
         inputFolder = input
         
         print(self.defaultOutputFolder)
@@ -75,4 +75,5 @@ class SSJ:
         onlyfiles = [f for f in listdir(input) if isfile(join(input, f))]
         
         for file in onlyfiles:
-            self.parseFile(file, inputFolder)
+            if file.endswith(".txt"):
+                self.parseFile(file, inputFolder)
