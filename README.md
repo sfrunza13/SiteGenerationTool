@@ -6,6 +6,9 @@ Author: Stefan Frunza
 To use simply open a console to the script's location and write <strong>python Sitegen.py</strong> along with the options you wish to specify, among which you must have a plain text file to convert to mark up.</p>
 
 
+<p>Optionally, if you leave 2 empty lines below the first line in the .txt file the program will make the first line of your text file the title of the HTML page that will be generated along with having it be bolded as an H1 at the top of the page.</p>
+
+
 <p>The tool will automatically create a <strong>./dist</strong> directory and insert the created HTML there. Everytime the program runs it will delete the target <strong>./dist</strong> directory and recreate it.</p>
 
 
