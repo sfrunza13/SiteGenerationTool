@@ -20,5 +20,5 @@ To use simply open a console to the script's location and write <strong>python S
 | -v | --version | Displays name and version of program |
 | -h | --help | Displays a help message with useful information about program and possible options |
 | -i | --input | Specify an Input file please add .txt suffix (requires argument) |
-| -o | --ouput | Specify a name for output HTML file, please add .HTML suffix (requires argument) |
+| -o | --ouput | Specify a name for existing output directory (requires argument, must be existing directory) *IN PROGRESS|
 
