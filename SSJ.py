@@ -64,7 +64,7 @@ class SSJ:
                         paragraphs.append(newLine)
                 else:
                     if line == "\n":
-                        newLine = "</p>" + "</p>"
+                        newLine = "</p>" + "<p>"
                         paragraphs.append(newLine)
                     else:
                         newLine = line
@@ -75,11 +75,11 @@ class SSJ:
             
             print("new name:", outputName)
             
-            self.writeOut(outputName, self.defaultOutputFolder, paragraphs, titleQuestionMark)
+            self.writeOut(outputName, paragraphs, titleQuestionMark)
         except OSError as e:
             print("Error: " + str(e))
         
-    def writeOut(self, output, defaultOutputFolder, paragraphs, title):    
+    def writeOut(self, output, paragraphs, title):    
         try:
             if self.output:
                 fileOut = open(self.output + "/" + output, "w")   
@@ -87,7 +87,6 @@ class SSJ:
             tempTemp = SSJ.template
             
             if title:
-                # SSJ.template = SSJ.template[:SSJ.template.find("<title>") + len("<title>")] + paragraphs[0] + SSJ.template[SSJ.template.find("<title>") + len("<title>"):]
                 SSJ.template = SSJ.template.replace("Filename", paragraphs[0][4:-5])
                 
             pos = SSJ.template.find(SSJ.token) + len(SSJ.token)    

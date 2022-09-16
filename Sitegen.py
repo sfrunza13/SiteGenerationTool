@@ -29,8 +29,8 @@ def main(argv):
         SiteGen = SSJ(input)
         
     try:
-        shutil.rmtree(SiteGen.defaultOutputFolder)
-        os.mkdir(SiteGen.defaultOutputFolder)
+        shutil.rmtree(SiteGen.output)
+        os.mkdir(SiteGen.output)
     except OSError as error:
         print(error)
 
