@@ -82,7 +82,7 @@ class SSJ:
     def writeOut(self, output, paragraphs, title):    
         try:
             if self.output:
-                fileOut = open(self.output + "/" + output, "w")   
+                fileOut = open(self.output + "/" + output, "w", encoding="utf-8")   
             
             tempTemp = SSJ.template
             
