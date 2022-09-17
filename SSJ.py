@@ -69,7 +69,7 @@ class SSJ:
                     else:
                         newLine = line
                         paragraphs.append(newLine)
-            print (paragraphs)
+            #print (paragraphs)
             
             outputName = inputFile[:inputFile.find('.txt')] + '.html'
             
@@ -110,6 +110,24 @@ class SSJ:
         
         print(onlyfiles)
         
+        temp = SSJ.template
+        
+        SSJ.template = SSJ.template.replace("Filename", "Index Page")
+        
         for file in onlyfiles:
             if file.endswith(".txt"):
                 self.parseFile(file, inputFolder)
+                outputName = (file[:file.find('.txt')] + '.html')
+                hrefName = outputName.replace(" ", "%20")
+                pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
+                SSJ.template = SSJ.template[:pos] + "<a href={}>{}</a><br>".format(hrefName, outputName) + SSJ.template[pos:]
+                
+                
+        try:
+            if self.output:
+                fileOut = open(self.output + "/" + "Index.html", "w", encoding="utf-8")
+                fileOut.write(SSJ.template)
+        except OSError as err:
+            print("Error: " + str(err)) 
+            
+        SSJ.template = temp
