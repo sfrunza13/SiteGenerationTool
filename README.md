@@ -1,6 +1,7 @@
 # SiteGenerationTool
 Author: Stefan Frunza
 
+<H1>To work with this program, Python is all you require</H1>
 
 <p><strong>THIS PROGRAM DELETES THE TARGET DIRECTORY SPECIFIED WITH THE -o OPTION.</strong> it then recreates it and populates it with the new HTML, but remember <strong>THIS PROGRAM DELETES THE TARGET DIRECTORY SPECIFIED WITH THE -o OPTION.</strong></p>
 
