@@ -37,7 +37,7 @@ class SSJ:
             
             
             Lines = file.readlines()
-        
+            
             for i, line in enumerate(Lines):
                 #my logic doesnt work. I need it to be blank line delimiter.
                 if i == 0:
@@ -71,7 +71,7 @@ class SSJ:
                         paragraphs.append(newLine)
             #print (paragraphs)
             
-            outputName = inputFile[:inputFile.find('.txt')] + '.html'
+            outputName = inputFile[:inputFile.find('.')] + '.html'
             
             print("new name:", outputName)
             
@@ -115,9 +115,9 @@ class SSJ:
         SSJ.template = SSJ.template.replace("Filename", "Index Page")
         
         for file in onlyfiles:
-            if file.endswith(".txt"):
+            if file.endswith(".txt") or file.endswith(".md"):
                 self.parseFile(file, inputFolder)
-                outputName = (file[:file.find('.txt')] + '.html')
+                outputName = (file[:file.find('.')] + '.html')
                 hrefName = outputName.replace(" ", "%20")
                 pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
                 SSJ.template = SSJ.template[:pos] + "<a href={}>{}</a><br>".format(hrefName, outputName) + SSJ.template[pos:]
