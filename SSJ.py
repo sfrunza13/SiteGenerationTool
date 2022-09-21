@@ -1,5 +1,6 @@
 from os import listdir
 from os.path import isfile, join
+import re
 
 class SSJ:
     defaultOutputFolder = "./dist"
@@ -68,7 +69,7 @@ class SSJ:
                         paragraphs.append(newLine)
                     else:
                         newLine = line
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
             #print (paragraphs)
             
             outputName = inputFile[:inputFile.find('.')] + '.html'
@@ -131,3 +132,26 @@ class SSJ:
             print("Error: " + str(err)) 
             
         SSJ.template = temp
+
+    def convertMarkdown(line):
+        newLine = line
+
+        #need to reduce code repetition
+        #italics
+        match = re.search("\*[^*]+\*",newLine)
+        if match != None:
+            newLine = newLine[:match.span()[0]] + "<i>" + newLine[match.span()[0]+1:match.span()[1]-1] + "</i>" + newLine[match.span()[1]:]
+
+        match = re.search("_[^*]+_",newLine)
+        if match != None:
+            newLine = newLine[:match.span()[0]] + "<i>" + newLine[match.span()[0]+1:match.span()[1]-1] + "</i>" + newLine[match.span()[1]:]
+
+        #bold
+        match = re.search("\*\*[^*]+\*\*",newLine)
+        if match != None:
+            newLine = newLine[:match.span()[0]] + "<b>" + newLine[match.span()[0]+2:match.span()[1]-2] + "</b>" + newLine[match.span()[1]:]
+        match = re.search("\*\*[^*]+\*\*",newLine)
+        if match != None:
+            newLine = newLine[:match.span()[0]] + "<b>" + newLine[match.span()[0]+2:match.span()[1]-2] + "</b>" + newLine[match.span()[1]:]
+
+        return newLine
