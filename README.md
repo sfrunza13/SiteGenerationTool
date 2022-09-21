@@ -8,7 +8,7 @@ Author: Stefan Frunza
 <p><strong>THIS PROGRAM DELETES THE TARGET DIRECTORY SPECIFIED WITH THE -o OPTION.</strong> it then recreates it and populates it with the new HTML, but remember <strong>THIS PROGRAM DELETES THE TARGET DIRECTORY SPECIFIED WITH THE -o OPTION.</strong></p>
 
 <H1>What it is</H1>
-<p>A tool that will take a text file as an option and create HTML markup based upon it.<br>
+<p>A tool that will take a text (.txt) or markdown (.md) file as an option and create HTML markup based upon it.<br>
 To use simply open a console to the script's location and write <strong>python Sitegen.py</strong> along with the options you wish to specify, among which you must have a plain text file to convert to mark up.</p>
 
 
