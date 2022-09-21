@@ -47,26 +47,26 @@ class SSJ:
                     if line != "\n":
                         titleQuestionMark = False
                         newLine = "<p>" + titleStorage 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine =  line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 elif i == 2:
                     if line != "\n":
                         titleQuestionMark = False
                         newLine = "<p>" + titleStorage + "</p>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine = "<p>" + line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 elif i == 3:
                     if titleQuestionMark == True:
                         newLine = "<h1>" + titleStorage + "</h1>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine = "<p>" + line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 else:
                     if line == "\n":
                         newLine = "</p>" + "<p>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                     else:
                         newLine = line
                         paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
@@ -133,25 +133,22 @@ class SSJ:
             
         SSJ.template = temp
 
+    def markdownSearch(regex, indChars, tag, line):
+        newLine = line
+        match = re.search(regex,newLine)
+        while match != None:
+            newLine = newLine[:match.span()[0]] + "<" + tag + ">" + newLine[match.span()[0]+indChars:match.span()[1]-indChars] + "</"+ tag +">" + newLine[match.span()[1]:]
+            match = re.search(regex,newLine)
+        return newLine
+
     def convertMarkdown(line):
         newLine = line
-
-        #need to reduce code repetition
-        #italics
-        match = re.search("\*[^*]+\*",newLine)
-        if match != None:
-            newLine = newLine[:match.span()[0]] + "<i>" + newLine[match.span()[0]+1:match.span()[1]-1] + "</i>" + newLine[match.span()[1]:]
-
-        match = re.search("_[^*]+_",newLine)
-        if match != None:
-            newLine = newLine[:match.span()[0]] + "<i>" + newLine[match.span()[0]+1:match.span()[1]-1] + "</i>" + newLine[match.span()[1]:]
-
         #bold
-        match = re.search("\*\*[^*]+\*\*",newLine)
-        if match != None:
-            newLine = newLine[:match.span()[0]] + "<b>" + newLine[match.span()[0]+2:match.span()[1]-2] + "</b>" + newLine[match.span()[1]:]
-        match = re.search("\*\*[^*]+\*\*",newLine)
-        if match != None:
-            newLine = newLine[:match.span()[0]] + "<b>" + newLine[match.span()[0]+2:match.span()[1]-2] + "</b>" + newLine[match.span()[1]:]
+        newLine = SSJ.markdownSearch("\*\*[^*]+\*\*", 2, "b", newLine)
+        newLine = SSJ.markdownSearch("__[^*]+__", 2, "b", newLine)
+        #italics
+        newLine = SSJ.markdownSearch("\*[^*]+\*", 1, "i", newLine)
+        newLine = SSJ.markdownSearch("_[^*]+_", 1, "i", newLine)
+
 
         return newLine
