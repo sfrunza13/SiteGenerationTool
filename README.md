@@ -31,3 +31,9 @@ To use simply open a console to the script's location and write <strong>python S
 | -i | --input | Specify an Input directory or file only .txt suffix will be correctly parsed (requires argument) |
 | -o | --ouput | Specify a name for existing directory (optional argument)|
 
+<h2>Markdown Support:</h2>
+
+| Type | Or | Result |
+| -------- | -------- | ------ |
+| \*Italic\* | \_Italic\_ | <i>Italic</i>  |
+| \*\*Bold\*\* | \_\_Bold\_\_ | <b>Bold</b>  |
