@@ -151,6 +151,9 @@ class SSJ:
         #italics
         newLine = SSJ.markdownSearch("\*[^*]+\*", 1, "i", newLine)
         newLine = SSJ.markdownSearch("_[^*]+_", 1, "i", newLine)
+        #code
+        newLine = SSJ.markdownSearch("\`\`\`[^*]+\`\`\`", 3, "code", newLine)
+        newLine = SSJ.markdownSearch("\`[^*]+\`", 1, "code", newLine)
 
 
         return newLine
