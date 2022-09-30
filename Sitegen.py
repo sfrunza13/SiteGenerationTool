@@ -37,7 +37,7 @@ def main(argv):
         
     os.mkdir(SiteGen.output)
 
-    if SiteGen.input.endswith(".txt"):
+    if SiteGen.input.endswith(".txt") or SiteGen.input.endswith(".md") :
         SiteGen.parseFile(input)
     elif isdir(SiteGen.input):
         SiteGen.parseDir(input)

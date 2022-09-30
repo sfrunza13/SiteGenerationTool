@@ -1,5 +1,6 @@
 from os import listdir
 from os.path import isfile, join
+import re
 
 class SSJ:
     defaultOutputFolder = "./dist"
@@ -40,7 +41,7 @@ class SSJ:
             
             
             Lines = file.readlines()
-        
+            
             for i, line in enumerate(Lines):
                 #my logic doesnt work. I need it to be blank line delimiter.
                 if i == 0:
@@ -49,32 +50,32 @@ class SSJ:
                     if line != "\n":
                         titleQuestionMark = False
                         newLine = "<p>" + titleStorage 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine =  line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 elif i == 2:
                     if line != "\n":
                         titleQuestionMark = False
                         newLine = "<p>" + titleStorage + "</p>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine = "<p>" + line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 elif i == 3:
                     if titleQuestionMark == True:
                         newLine = "<h1>" + titleStorage + "</h1>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                         newLine = "<p>" + line 
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                 else:
                     if line == "\n":
                         newLine = "</p>" + "<p>"
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
                     else:
                         newLine = line
-                        paragraphs.append(newLine)
+                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
             #print (paragraphs)
             
-            outputName = inputFile[:inputFile.find('.txt')] + '.html'
+            outputName = inputFile[:inputFile.find('.')] + '.html'
             
             print("new name:", outputName)
             
@@ -118,9 +119,9 @@ class SSJ:
         SSJ.template = SSJ.template.replace("Filename", "Index Page")
         
         for file in onlyfiles:
-            if file.endswith(".txt"):
+            if file.endswith(".txt") or file.endswith(".md"):
                 self.parseFile(file, inputFolder)
-                outputName = (file[:file.find('.txt')] + '.html')
+                outputName = (file[:file.find('.')] + '.html')
                 hrefName = outputName.replace(" ", "%20")
                 pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
                 SSJ.template = SSJ.template[:pos] + "<a href={}>{}</a><br>".format(hrefName, outputName) + SSJ.template[pos:]
@@ -134,3 +135,23 @@ class SSJ:
             print("Error: " + str(err)) 
             
         SSJ.template = temp
+
+    def markdownSearch(regex, indChars, tag, line):
+        newLine = line
+        match = re.search(regex,newLine)
+        while match != None:
+            newLine = newLine[:match.span()[0]] + "<" + tag + ">" + newLine[match.span()[0]+indChars:match.span()[1]-indChars] + "</"+ tag +">" + newLine[match.span()[1]:]
+            match = re.search(regex,newLine)
+        return newLine
+
+    def convertMarkdown(line):
+        newLine = line
+        #bold
+        newLine = SSJ.markdownSearch("\*\*[^*]+\*\*", 2, "b", newLine)
+        newLine = SSJ.markdownSearch("__[^*]+__", 2, "b", newLine)
+        #italics
+        newLine = SSJ.markdownSearch("\*[^*]+\*", 1, "i", newLine)
+        newLine = SSJ.markdownSearch("_[^*]+_", 1, "i", newLine)
+
+
+        return newLine
