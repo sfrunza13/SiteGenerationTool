@@ -17,8 +17,11 @@ class SSJ:
 </html>"""
     
     
-    def __init__(self,input,output=None):
+    def __init__(self,input=None,output=None):
         self.input = input
+        if input is None:
+            print("No input has been specified. This can not work.")
+        
         if output is None:
             self.output = SSJ.defaultOutputFolder
         else:
