@@ -139,7 +139,10 @@ class SSJ:
         newLine = line
         match = re.search(regex,newLine)
         while match != None:
-            newLine = newLine[:match.span()[0]] + "<" + tag + ">" + newLine[match.span()[0]+indChars:match.span()[1]-indChars] + "</"+ tag +">" + newLine[match.span()[1]:]
+            if (tag == "hr"):
+                newLine = newLine[:match.span()[0]] + "<" + tag + ">"+ newLine[match.span()[1]:]
+            else:
+                newLine = newLine[:match.span()[0]] + "<" + tag + ">" + newLine[match.span()[0]+indChars:match.span()[1]-indChars] + "</"+ tag +">" + newLine[match.span()[1]:]
             match = re.search(regex,newLine)
         return newLine
 
@@ -151,6 +154,7 @@ class SSJ:
         #italics
         newLine = SSJ.markdownSearch("\*[^*]+\*", 1, "i", newLine)
         newLine = SSJ.markdownSearch("_[^*]+_", 1, "i", newLine)
-
+        #hr
+        newLine = SSJ.markdownSearch("\-\-\-[^*]", 3, "hr", newLine)
 
         return newLine
