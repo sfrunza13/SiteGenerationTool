@@ -22,7 +22,6 @@ class SSJ:
         self.input = input
         if input is None:
             print("No input has been specified. This can not work.")
-        
         if output is None:
             self.output = SSJ.defaultOutputFolder
         else:

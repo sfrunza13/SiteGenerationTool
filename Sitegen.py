@@ -26,12 +26,9 @@ def main(argv):
     if 'output' in locals():
         SiteGen = SSJ(input, output)
     else:
-        SiteGen = SSJ(input)
-        
-    try:
-        
+        SiteGen = SSJ(input)        
+    try:    
         shutil.rmtree(SiteGen.output)
-        
     except OSError as error:
         print(error)
         
