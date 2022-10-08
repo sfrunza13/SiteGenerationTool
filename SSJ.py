@@ -1,6 +1,6 @@
 from os import listdir
 from os.path import isfile, join
-import re
+import re, json
 
 class SSJ:
     defaultOutputFolder = "./dist"
@@ -163,4 +163,8 @@ class SSJ:
         return newLine
 
     def parseConfig(configFile, input, output):
+        with open("tutswiki.json", "r") as jsonfile:
+            data = json.load(jsonfile)
+            print("Read successful")
+        print(data)
         return 0
