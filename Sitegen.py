@@ -17,10 +17,14 @@ def main(argv):
 
     for opt, arg in opts:
         if opt in ("-c", "--config"):
+            config = arg
             configExists = 1
+            break
 
     if (configExists == 1):
-        print("config file")
+        if os.path.exists(config) and config.endswith(".json"):
+            SiteGen = SSJ
+            SiteGen.parseConfig(config, input, output)
 
     if (configExists == 0):
         for opt, arg in opts:
