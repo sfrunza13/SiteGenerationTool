@@ -8,20 +8,30 @@ def main(argv):
 
 
     try:
-        opts, args = getopt.getopt(argv, "vhi:o:", ["version", "help", "input=", "output="])
+        opts, args = getopt.getopt(argv, "vhi:o:c:", ["version", "help", "input=", "output=", "config="])
     except getopt.GetoptError:
         print ('Error with GetOpt')
         sys.exit(2)
 
+    configExists = 0
+
     for opt, arg in opts:
-        if opt in ("-v", "--version"):
-           print ("Name: " + name, "\nVersion: " + version)  
-        elif opt in ("-h", "--help"):
-            print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of a specific directory you would like to output to (it must be an existing valid directory).\n -v or --version to see the name and version of the tool\n")
-        elif opt in ("-i", "--input"):
-            input = arg
-        elif opt in ("-o", "--output"):
-            output = arg 
+        if opt in ("-c", "--config"):
+            configExists = 1
+
+    if (configExists == 1):
+        print("config file")
+
+    if (configExists == 0):
+        for opt, arg in opts:
+            if opt in ("-v", "--version"):
+                print ("Name: " + name, "\nVersion: " + version)  
+            if opt in ("-h", "--help"):
+                print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of a specific directory you would like to output to (it must be an existing valid directory).\n -v or --version to see the name and version of the tool\n")
+            if opt in ("-i", "--input"):
+                input = arg
+            if opt in ("-o", "--output"):
+                output = arg 
     
     if 'output' in locals():
         SiteGen = SSJ(input, output)
