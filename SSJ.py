@@ -161,3 +161,6 @@ class SSJ:
         newLine = SSJ.markdownSearch("\-\-\-[^*]", 3, "hr", newLine)
 
         return newLine
+
+    def parseConfig(configFile, input, output):
+        return 0
