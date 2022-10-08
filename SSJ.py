@@ -163,7 +163,7 @@ class SSJ:
         return newLine
 
     def parseConfig(configFile, input, output):
-        with open("tutswiki.json", "r") as jsonfile:
+        with open(configFile, "r") as jsonfile:
             data = json.load(jsonfile)
             print("Read successful")
         print(data)
