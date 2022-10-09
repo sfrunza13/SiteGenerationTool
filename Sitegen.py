@@ -23,8 +23,11 @@ def main(argv):
 
     if (configExists == 1):
         if os.path.exists(config) and config.endswith(".json"):
-            SiteGen = SSJ
-            SiteGen.parseConfig(config, input, output)
+            configOpts = SSJ.parseConfig(SSJ, config)
+            if configOpts[0] != '':
+                input = configOpts[0]
+            if configOpts[1] !='':
+                output = configOpts[1]
 
     if (configExists == 0):
         for opt, arg in opts:

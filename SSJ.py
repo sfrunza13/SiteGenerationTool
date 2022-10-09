@@ -162,9 +162,16 @@ class SSJ:
 
         return newLine
 
-    def parseConfig(configFile, input, output):
+    def parseConfig(self, configFile):
         with open(configFile, "r") as jsonfile:
             data = json.load(jsonfile)
             print("Read successful")
-        print(data)
-        return 0
+
+        arrOfStr = [''] * 2
+        
+        if (data['input']):
+            arrOfStr[0] = data['input']
+        if (data['output']):
+            arrOfStr[1] = data['output']
+
+        return arrOfStr
