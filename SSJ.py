@@ -170,8 +170,13 @@ class SSJ:
         arrOfStr = [''] * 2
         
         if (data['input']):
-            arrOfStr[0] = data['input']
+           arrOfStr[0] = data['input']
+        else:
+            arrOfStr[0] = "./dist"
+
         if (data['output']):
             arrOfStr[1] = data['output']
+        else:
+            arrOfStr[0] = "./output"
 
         return arrOfStr
