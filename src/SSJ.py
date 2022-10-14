@@ -1,9 +1,10 @@
 from os import listdir
 from os.path import isfile, join
+from pathlib import Path
 import re, json
 
 class SSJ:
-    defaultOutputFolder = "./dist"
+    defaultOutputFolder = Path("./dist")
     token = "<body>"
     template = """<!doctype html>
 <html lang="en">
@@ -21,11 +22,11 @@ class SSJ:
     def __init__(self,input=None,output=None):
         self.input = input
         if input is None:
-            print("No input has been specified. This can not work.")
+            print("No input has been specified at time of initialization.")
         if output is None:
             self.output = SSJ.defaultOutputFolder
         else:
-            self.output = output
+            self.output = Path(output)
         
     
     def parseFile(self, inputFile, inputFolder = None):   
@@ -36,13 +37,14 @@ class SSJ:
             if inputFolder is None:
                 file = open(inputFile, "r", encoding="utf8")
             else:
-                file = open(inputFolder + "/" + inputFile, "r", encoding="utf8")
+                inputFolder = Path(inputFolder)
+                source = inputFolder/inputFile
+                file = open(source, "r", encoding="utf8")
             
             
             Lines = file.readlines()
             
             for i, line in enumerate(Lines):
-                #my logic doesnt work. I need it to be blank line delimiter.
                 if i == 0:
                     titleStorage = line
                 elif i == 1:
@@ -72,7 +74,6 @@ class SSJ:
                     else:
                         newLine = line
                         paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
-            #print (paragraphs)
             
             outputName = inputFile[:inputFile.find('.')] + '.html'
             
@@ -85,7 +86,7 @@ class SSJ:
     def writeOut(self, output, paragraphs, title):    
         try:
             if self.output:
-                fileOut = open(self.output + "/" + output, "w", encoding="utf-8")   
+                fileOut = open(self.output / output, "w", encoding="utf-8")   
             
             tempTemp = SSJ.template
             
@@ -128,7 +129,7 @@ class SSJ:
                 
         try:
             if self.output:
-                fileOut = open(self.output + "/" + "Index.html", "w", encoding="utf-8")
+                fileOut = open(self.output / "Index.html", "w", encoding="utf-8")
                 fileOut.write(SSJ.template)
         except OSError as err:
             print("Error: " + str(err)) 
@@ -172,11 +173,11 @@ class SSJ:
         if (data['input']):
            arrOfStr[0] = data['input']
         else:
-            arrOfStr[0] = "./dist"
+            arrOfStr[0] = SSJ.defaultOutputFolder
 
         if (data['output']):
             arrOfStr[1] = data['output']
         else:
-            arrOfStr[0] = "./output"
+            arrOfStr[0] = Path("./output")
 
         return arrOfStr

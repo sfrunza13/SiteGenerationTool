@@ -41,23 +41,26 @@ def main(argv):
                 output = arg 
     
     if 'output' in locals():
-        SiteGen = SSJ(input, output)
+        superSiteJen = SSJ(input, output)
+    elif 'input' in locals():
+        superSiteJen = SSJ(input)
     else:
-        SiteGen = SSJ(input)        
+        print ('There must be at least a valid .txt, .md, or directory input specified') 
+        sys.exit(1)       
     try:    
-        shutil.rmtree(SiteGen.output)
+        shutil.rmtree(superSiteJen.output)
     except OSError as error:
         print(error)
         
-    os.mkdir(SiteGen.output)
+    os.mkdir(superSiteJen.output)
 
-    if SiteGen.input.endswith(".txt") or SiteGen.input.endswith(".md") :
-        SiteGen.parseFile(input)
-    elif isdir(SiteGen.input):
-        SiteGen.parseDir(input)
+    if superSiteJen.input.endswith(".txt") or superSiteJen.input.endswith(".md") :
+        superSiteJen.parseFile(input)
+    elif isdir(superSiteJen.input):
+        superSiteJen.parseDir(input)
 
-    print ("Input option: ", SiteGen.input)
-    print ("Output option: ", SiteGen.output)
+    print ("Input option: ", superSiteJen.input)
+    print ("Output option: ", superSiteJen.output)
     
 if __name__ == "__main__":
    main(sys.argv[1:])
