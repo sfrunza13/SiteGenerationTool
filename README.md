@@ -21,7 +21,7 @@ To use simply open a console to the script's location and write <strong>python S
 <p>A user may specify an input directory instead of an input file and the program will go through every file within the directory and attempt to convert .txt to .html while ignoring further directories. When a directory is specified as input the program will also attempt to create an index.html with anchor tags to all of the HTML files generated based on the input directory's contents.</p>
 
 
-<h2>Possile Options:</h2>
+<h2>Possible Options:</h2>
 
 
 | ShortCut | LongOption | Result |
