@@ -12,7 +12,10 @@ class SSJ:
   <meta charset="utf-8">
   <title>Filename</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="..\static\style.css">
 </head>
+<div class="navbar">
+</div>
 <body>
   
 </body>
@@ -118,14 +121,17 @@ class SSJ:
         
         SSJ.template = SSJ.template.replace("Filename", "Index Page")
         
+        #go through files and make the navbar
         for file in onlyfiles:
             if file.endswith(".txt") or file.endswith(".md"):
-                self.parseFile(file, inputFolder)
                 outputName = (file[:file.find('.')] + '.html')
                 hrefName = outputName.replace(" ", "%20")
-                pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
-                SSJ.template = SSJ.template[:pos] + "<a href={}>{}</a><br>".format(hrefName, outputName) + SSJ.template[pos:]
+                pos = SSJ.template.find('<div class="navbar">') + len('<div class="navbar">')
+                SSJ.template = SSJ.template[:pos] + "<button><a href={}>{}</a></button>".format(hrefName, outputName) + SSJ.template[pos:]
                 
+        #parse files one by one        
+        for file in onlyfiles:
+            self.parseFile(file, inputFolder)        
                 
         try:
             if self.output:
@@ -134,7 +140,7 @@ class SSJ:
         except OSError as err:
             print("Error: " + str(err)) 
             
-        SSJ.template = temp
+        # SSJ.template = temp
 
     def markdownSearch(regex, indChars, tag, line):
         newLine = line
