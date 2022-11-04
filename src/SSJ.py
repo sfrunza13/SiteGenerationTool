@@ -1,12 +1,17 @@
+"""SSJ module where the input directory or file is parsed into an HTML with some MarkDown Support"""
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
-import re, json
+import re
+import json
+
 
 class SSJ:
+    """SSJ class the Site Generator object that does all the work"""
+
     defaultOutputFolder = Path("./dist")
     token = "<body>"
-    template = """<!doctype html>
+    template = r"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -20,170 +25,235 @@ class SSJ:
   
 </body>
 </html>"""
-    
-    
-    def __init__(self,input=None,output=None):
-        self.input = input
-        if input is None:
+
+    def __init__(self, input_name=None, output=None):
+        self.input_name = input_name
+        if input_name is None:
             print("No input has been specified at time of initialization.")
         if output is None:
             self.output = SSJ.defaultOutputFolder
         else:
             self.output = Path(output)
-        
-    
-    def parseFile(self, inputFile, inputFolder = None):   
-        paragraphs = []   
-        titleStorage = ""  
-        titleQuestionMark = True
+
+    def parse_file(self, input_file, input_folder=None):
+        """looks through text file and parses header, body paragraphs, etc...
+        first line is header if it's given a few empty newlines underneath, new
+        paragraphs are denoted by newlines, convert markdown is done at every
+        point to see if there are special characters in the text to translate to
+        supported mark up tags."""
+        paragraphs = []
+        title_storage = ""
+        title_question_mark = True
         try:
-            if inputFolder is None:
-                file = open(inputFile, "r", encoding="utf8")
+            if input_folder is None:
+                with open(input_file, "r", encoding="utf8") as file:
+                    lines = file.readlines()
             else:
-                inputFolder = Path(inputFolder)
-                source = inputFolder/inputFile
-                file = open(source, "r", encoding="utf8")
-            
-            
-            Lines = file.readlines()
-            
-            for i, line in enumerate(Lines):
+                input_folder = Path(input_folder)
+                source = input_folder / input_file
+                with open(source, "r", encoding="utf8") as file:
+
+                    lines = file.readlines()
+
+            for i, line in enumerate(lines):
                 if i == 0:
-                    titleStorage = line
+                    title_storage = line
                 elif i == 1:
                     if line != "\n":
-                        titleQuestionMark = False
-                        newLine = "<p>" + titleStorage 
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
-                        newLine =  line 
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
+                        title_question_mark = False
+                        new_line = "<p>" + title_storage
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
+                        new_line = line
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
                 elif i == 2:
                     if line != "\n":
-                        titleQuestionMark = False
-                        newLine = "<p>" + titleStorage + "</p>"
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
-                        newLine = "<p>" + line 
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
+                        title_question_mark = False
+                        new_line = "<p>" + title_storage + "</p>"
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
+                        new_line = "<p>" + line
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
                 elif i == 3:
-                    if titleQuestionMark == True:
-                        newLine = "<h1>" + titleStorage + "</h1>"
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
-                        newLine = "<p>" + line 
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
+                    if title_question_mark is True:
+                        new_line = "<h1>" + title_storage + "</h1>"
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
+                        new_line = "<p>" + line
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
                 else:
                     if line == "\n":
-                        newLine = "</p>" + "<p>"
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
+                        new_line = "</p>" + "<p>"
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
                     else:
-                        newLine = line
-                        paragraphs.append(SSJ.convertMarkdown(newLine) if inputFile.endswith(".md") else newLine)
-            
-            outputName = inputFile[:inputFile.find('.')] + '.html'
-            
-            print("new name:", outputName)
-            
-            self.writeOut(outputName, paragraphs, titleQuestionMark)
-        except OSError as e:
-            print("Error: " + str(e))
-        
-    def writeOut(self, output, paragraphs, title):    
+                        new_line = line
+                        paragraphs.append(
+                            SSJ.convert_markdown(SSJ, new_line)
+                            if input_file.endswith(".md")
+                            else new_line
+                        )
+
+            output_name = input_file[: input_file.find(".")] + ".html"
+
+            print("new name:", output_name)
+
+            self.write_out(output_name, paragraphs, title_question_mark)
+        except OSError as err:
+            print("Error: " + str(err))
+
+    def write_out(self, output, paragraphs, title):
+        """writes all paragraphs to the HTML template, changes filename"""
         try:
             if self.output:
-                fileOut = open(self.output / output, "w", encoding="utf-8")   
-            
-            tempTemp = SSJ.template
-            
-            if title:
-                SSJ.template = SSJ.template.replace("Filename", paragraphs[0][4:-5])
-                
-            pos = SSJ.template.find(SSJ.token) + len(SSJ.token)    
-                
-            for paragraph in reversed(paragraphs):
-                SSJ.template = SSJ.template[:pos] + paragraph + SSJ.template[pos:]
-                
-            fileOut.write(SSJ.template)
-            SSJ.template = tempTemp
-                                
+                with open(self.output / output, "w", encoding="utf-8") as file_out:
+
+                    temp_temp = SSJ.template
+
+                    if title:
+                        SSJ.template = SSJ.template.replace(
+                            "Filename", paragraphs[0][4:-5]
+                        )
+
+                    pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
+
+                    for paragraph in reversed(paragraphs):
+                        SSJ.template = (
+                            SSJ.template[:pos] + paragraph + SSJ.template[pos:]
+                        )
+
+                    file_out.write(SSJ.template)
+                    SSJ.template = temp_temp
+
         except OSError as err:
-            print("Error: " + str(err)) 
-        
-        
-    def parseDir(self, input):
-        inputFolder = input
-        
+            print("Error: " + str(err))
+
+    def parse_dir(self, input_name):
+        """Looks through directory, adds valid files to navbar then sends them to be converted"""
+        input_folder = input_name
+
         print(self.defaultOutputFolder)
-        #retrieve every txt file in dir omitting other dirs
-        onlyfiles = [f for f in listdir(input) if isfile(join(input, f))]
-        
+        # retrieve every txt file in dir omitting other dirs
+        onlyfiles = [f for f in listdir(input_name) if isfile(join(input_name, f))]
+
         print(onlyfiles)
-        
-        temp = SSJ.template
-        
+
         SSJ.template = SSJ.template.replace("Filename", "Index Page")
-        
-        #go through files and make the navbar
+
+        # go through files and make the navbar
         for file in onlyfiles:
             if file.endswith(".txt") or file.endswith(".md"):
-                outputName = (file[:file.find('.')] + '.html')
-                hrefName = outputName.replace(" ", "%20")
-                pos = SSJ.template.find('<div class="navbar">') + len('<div class="navbar">')
-                SSJ.template = SSJ.template[:pos] + "<button><a href={}>{}</a></button>".format(hrefName, outputName) + SSJ.template[pos:]
-                
-        #parse files one by one        
+                output_name = file[: file.find(".")] + ".html"
+                href_name = output_name.replace(" ", "%20")
+                pos = SSJ.template.find('<div class="navbar">') + len(
+                    '<div class="navbar">'
+                )
+                SSJ.template = f"""{SSJ.template[:pos]}<button><a href={href_name}>{output_name}</a>
+                    </button>{SSJ.template[pos:]}"""
+
+        # parse files one by one
         for file in onlyfiles:
-            self.parseFile(file, inputFolder)        
-                
+            self.parse_file(file, input_folder)
+
         try:
             if self.output:
-                fileOut = open(self.output / "Index.html", "w", encoding="utf-8")
-                fileOut.write(SSJ.template)
+                with open(
+                    self.output / "Index.html", "w", encoding="utf-8"
+                ) as file_out:
+                    file_out.write(SSJ.template)
         except OSError as err:
-            print("Error: " + str(err)) 
-            
+            print("Error: " + str(err))
+
         # SSJ.template = temp
 
-    def markdownSearch(regex, indChars, tag, line):
-        newLine = line
-        match = re.search(regex,newLine)
-        while match != None:
-            if (tag == "hr"):
-                newLine = newLine[:match.span()[0]] + "<" + tag + ">"+ newLine[match.span()[1]:]
+    def markdown_search(self, regex, ind_chars, tag, line):
+        """Searches for what could be considered markdown in the txt file"""
+        new_line = line
+        match = re.search(regex, new_line)
+        while match is not None:
+            if tag == "hr":
+                new_line = (
+                    new_line[: match.span()[0]]
+                    + "<"
+                    + tag
+                    + ">"
+                    + new_line[match.span()[1] :]
+                )
             else:
-                newLine = newLine[:match.span()[0]] + "<" + tag + ">" + newLine[match.span()[0]+indChars:match.span()[1]-indChars] + "</"+ tag +">" + newLine[match.span()[1]:]
-            match = re.search(regex,newLine)
-        return newLine
+                new_line = (
+                    new_line[: match.span()[0]]
+                    + "<"
+                    + tag
+                    + ">"
+                    + new_line[
+                        match.span()[0] + ind_chars : match.span()[1] - ind_chars
+                    ]
+                    + "</"
+                    + tag
+                    + ">"
+                    + new_line[match.span()[1] :]
+                )
+            match = re.search(regex, new_line)
+        return new_line
 
-    def convertMarkdown(line):
-        newLine = line
-        #bold
-        newLine = SSJ.markdownSearch("\*\*[^*]+\*\*", 2, "b", newLine)
-        newLine = SSJ.markdownSearch("__[^*]+__", 2, "b", newLine)
-        #italics
-        newLine = SSJ.markdownSearch("\*[^*]+\*", 1, "i", newLine)
-        newLine = SSJ.markdownSearch("_[^*]+_", 1, "i", newLine)
-        #code
-        newLine = SSJ.markdownSearch("\`\`\`[^*]+\`\`\`", 3, "code", newLine)
-        newLine = SSJ.markdownSearch("\`[^*]+\`", 1, "code", newLine)
-        #hr
-        newLine = SSJ.markdownSearch("\-\-\-[^*]", 3, "hr", newLine)
+    def convert_markdown(self, line):
+        """uses markdown_search to go through the different
+        special characters we would like to check and convert"""
+        new_line = line
+        # bold
+        new_line = SSJ.markdown_search(SSJ, r"\*\*[^*]+\*\*", 2, "b", new_line)
+        new_line = SSJ.markdown_search(SSJ, r"__[^*]+__", 2, "b", new_line)
+        # italics
+        new_line = SSJ.markdown_search(SSJ, r"\*[^*]+\*", 1, "i", new_line)
+        new_line = SSJ.markdown_search(SSJ, r"_[^*]+_", 1, "i", new_line)
+        # code
+        new_line = SSJ.markdown_search(SSJ, r"\`\`\`[^*]+\`\`\`", 3, "code", new_line)
+        new_line = SSJ.markdown_search(SSJ, r"\`[^*]+\`", 1, "code", new_line)
+        # hr
+        new_line = SSJ.markdown_search(SSJ, r"\-\-\-[^*]", 3, "hr", new_line)
 
-        return newLine
+        return new_line
 
-    def parseConfig(self, configFile):
-        with open(configFile, "r") as jsonfile:
+    def parse_config(self, config_file):
+        """parses config json"""
+        with open(config_file, "r", encoding="utf-8") as jsonfile:
             data = json.load(jsonfile)
             print("Read successful")
 
-        arrOfStr = [''] * 2
-        
-        if (data['input']):
-           arrOfStr[0] = data['input']
-        else:
-            arrOfStr[0] = SSJ.defaultOutputFolder
+        arr_of_str = [""] * 2
 
-        if (data['output']):
-            arrOfStr[1] = data['output']
+        if data["input"]:
+            arr_of_str[0] = data["input"]
         else:
-            arrOfStr[0] = Path("./output")
+            arr_of_str[0] = SSJ.defaultOutputFolder
 
-        return arrOfStr
+        if data["output"]:
+            arr_of_str[1] = data["output"]
+        else:
+            arr_of_str[0] = Path("./output")
+
+        return arr_of_str

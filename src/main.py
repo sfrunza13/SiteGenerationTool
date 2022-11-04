@@ -1,67 +1,84 @@
-import sys, getopt, os, shutil
-from SSJ import SSJ
+"""This is the main module that parses the arguments passed to the program and passes
+them to the SSJ module to parse into HTML"""
+import sys
+import getopt
+import os
+import shutil
 from os.path import isdir
+from ssj import SSJ
 
-def main(argv):   
+
+def main(argv):
+    """Main method, takes arguments, checks they're valid and sends them on to SSJ"""
     name = "SSJ SSG the Super Saiyan Site Tool"
     version = "0.0.1"
 
-
     try:
-        opts, args = getopt.getopt(argv, "vhi:o:c:", ["version", "help", "input=", "output=", "config="])
+        opts, args = getopt.getopt(
+            argv, "vhi:o:c:", ["version", "help", "input=", "output=", "config="]
+        )
     except getopt.GetoptError:
-        print ('Error with GetOpt')
+        print("Error with GetOpt")
         sys.exit(2)
 
-    configExists = 0
+    config_exists = 0
 
     for opt, arg in opts:
         if opt in ("-c", "--config"):
             config = arg
-            configExists = 1
+            config_exists = 1
             break
 
-    if (configExists == 1):
+    if config_exists == 1:
         if os.path.exists(config) and config.endswith(".json"):
-            configOpts = SSJ.parseConfig(SSJ, config)
-            if configOpts[0] != '':
-                input = configOpts[0]
-            if configOpts[1] !='':
-                output = configOpts[1]
+            config_opts = SSJ.parse_config(SSJ, config)
+            if config_opts[0] != "":
+                input_name = config_opts[0]
+            if config_opts[1] != "":
+                output = config_opts[1]
 
-    if (configExists == 0):
+    if config_exists == 0:
         for opt, arg in opts:
             if opt in ("-v", "--version"):
-                print ("Name: " + name, "\nVersion: " + version)  
+                print("Name: " + name, "\nVersion: " + version)
             if opt in ("-h", "--help"):
-                print("This tool is designed to take a plain text file and generate a HTML markup file based upon it.\nPossible options:\n -i or --input to specify an input file\n -o or --output to specify the name of a specific directory you would like to output to (it must be an existing valid directory).\n -v or --version to see the name and version of the tool\n")
+                print(
+                    """This tool is designed to take a plain text file and generate a HTML markup
+                    file based upon it.\nPossible options:\n -i or --input to specify an input
+                    file\n -o or --output to specify the name of a specific directory you would
+                    like to output to (it must be an existing valid directory).\n -v or
+                    --version to see the name and version of the tool\n"""
+                )
             if opt in ("-i", "--input"):
-                input = arg
+                input_name = arg
+                print(input_name)
             if opt in ("-o", "--output"):
-                output = arg 
-    
-    if 'output' in locals():
-        superSiteJen = SSJ(input, output)
-    elif 'input' in locals():
-        superSiteJen = SSJ(input)
+                output = arg
+
+    if "output" in locals():
+        super_site_jen = SSJ(input_name, output)
+    elif "input_name" in locals():
+        super_site_jen = SSJ(input_name)
     else:
-        print ('There must be at least a valid .txt, .md, or directory input specified') 
-        sys.exit(1)       
-    try:    
-        shutil.rmtree(superSiteJen.output)
+        print("There must be at least a valid .txt, .md, or directory input specified")
+        sys.exit(1)
+    try:
+        shutil.rmtree(super_site_jen.output)
     except OSError as error:
         print(error)
-        
-    os.mkdir(superSiteJen.output)
 
-    if superSiteJen.input.endswith(".txt") or superSiteJen.input.endswith(".md") :
-        superSiteJen.parseFile(input)
-    elif isdir(superSiteJen.input):
-        superSiteJen.parseDir(input)
+    os.mkdir(super_site_jen.output)
 
-    print ("Input option: ", superSiteJen.input)
-    print ("Output option: ", superSiteJen.output)
-    
+    if super_site_jen.input_name.endswith(".txt") or super_site_jen.input_name.endswith(
+        ".md"
+    ):
+        super_site_jen.parse_file(input_name)
+    elif isdir(super_site_jen.input_name):
+        super_site_jen.parse_dir(input_name)
+
+    print("input_name option: ", super_site_jen.input_name)
+    print("Output option: ", super_site_jen.output)
+
+
 if __name__ == "__main__":
-   main(sys.argv[1:])
-   
+    main(sys.argv[1:])
