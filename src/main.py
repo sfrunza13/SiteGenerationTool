@@ -10,8 +10,6 @@ from ssj import SSJ
 
 def main(argv):
     """Main method, takes arguments, checks they're valid and sends them on to SSJ"""
-    name = "SSJ SSG the Super Saiyan Site Tool"
-    version = "0.0.1"
 
     try:
         opts, args = getopt.getopt(
@@ -32,36 +30,10 @@ def main(argv):
     if config_exists == 1:
         if os.path.exists(config) and config.endswith(".json"):
             config_opts = SSJ.parse_config(SSJ, config)
-            if config_opts[0] != "":
-                input_name = config_opts[0]
-            if config_opts[1] != "":
-                output = config_opts[1]
+            super_site_jen = parse_config_args(config_opts)
+    elif config_exists == 0:
+        super_site_jen = parse_arg(opts)
 
-    if config_exists == 0:
-        for opt, arg in opts:
-            if opt in ("-v", "--version"):
-                print("Name: " + name, "\nVersion: " + version)
-            if opt in ("-h", "--help"):
-                print(
-                    """This tool is designed to take a plain text file and generate a HTML markup
-                    file based upon it.\nPossible options:\n -i or --input to specify an input
-                    file\n -o or --output to specify the name of a specific directory you would
-                    like to output to (it must be an existing valid directory).\n -v or
-                    --version to see the name and version of the tool\n"""
-                )
-            if opt in ("-i", "--input"):
-                input_name = arg
-                print(input_name)
-            if opt in ("-o", "--output"):
-                output = arg
-
-    if "output" in locals():
-        super_site_jen = SSJ(input_name, output)
-    elif "input_name" in locals():
-        super_site_jen = SSJ(input_name)
-    else:
-        print("There must be at least a valid .txt, .md, or directory input specified")
-        sys.exit(1)
     try:
         shutil.rmtree(super_site_jen.output)
     except OSError as error:
@@ -72,12 +44,59 @@ def main(argv):
     if super_site_jen.input_name.endswith(".txt") or super_site_jen.input_name.endswith(
         ".md"
     ):
-        super_site_jen.parse_file(input_name)
+        super_site_jen.parse_file(super_site_jen.input_name)
     elif isdir(super_site_jen.input_name):
-        super_site_jen.parse_dir(input_name)
+        super_site_jen.parse_dir(super_site_jen.input_name)
 
-    print("input_name option: ", super_site_jen.input_name)
-    print("Output option: ", super_site_jen.output)
+
+def parse_config_args(config_opts):
+    """
+    Checks what to do with arguments
+    in config json
+    """
+    if config_opts[0] != "":
+        input_name = config_opts[0]
+    if config_opts[1] != "":
+        output = config_opts[1]
+        if "output" in locals():
+            super_site_jen = SSJ(input_name, output)
+        elif "input_name" in locals():
+            super_site_jen = SSJ(input_name)
+    return super_site_jen
+
+
+def parse_arg(opts):
+    """
+    Make sense of the passed argument
+    """
+    name = "SSJ SSG the Super Saiyan Site Tool"
+    version = "0.0.1"
+    for opt, arg in opts:
+        if opt in ("-v", "--version"):
+            print("Name: " + name, "\nVersion: " + version)
+        if opt in ("-h", "--help"):
+            print(
+                """This tool is designed to take a plain text file and generate a HTML markup
+                file based upon it.\nPossible options:\n -i or --input to specify an input
+                file\n -o or --output to specify the name of a specific directory you would
+                like to output to (it must be an existing valid directory).\n -v or
+                --version to see the name and version of the tool\n"""
+            )
+        if opt in ("-i", "--input"):
+            input_name = arg
+
+        if opt in ("-o", "--output"):
+            output = arg
+
+    if "output" in locals():
+        super_site_jen = SSJ(input_name, output)
+    elif "input_name" in locals():
+        super_site_jen = SSJ(input_name)
+    else:
+        print("There must be at least a valid .txt, .md, or directory input specified")
+        sys.exit(1)
+
+    return super_site_jen
 
 
 if __name__ == "__main__":

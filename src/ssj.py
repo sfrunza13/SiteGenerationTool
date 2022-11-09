@@ -1,4 +1,4 @@
-"""SSJ module where the input directory or file is parsed into an HTML with some MarkDown Support"""
+"""ssj module where the input directory or file is parsed into an HTML with some MarkDown Support"""
 from os import listdir
 from os.path import isfile, join
 from pathlib import Path
@@ -42,8 +42,7 @@ class SSJ:
         point to see if there are special characters in the text to translate to
         supported mark up tags."""
         paragraphs = []
-        title_storage = ""
-        title_question_mark = True
+
         try:
             if input_folder is None:
                 with open(input_file, "r", encoding="utf8") as file:
@@ -55,99 +54,47 @@ class SSJ:
 
                     lines = file.readlines()
 
-            for i, line in enumerate(lines):
-                if i == 0:
-                    title_storage = line
-                elif i == 1:
-                    if line != "\n":
-                        title_question_mark = False
-                        new_line = "<p>" + title_storage
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                        new_line = line
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                elif i == 2:
-                    if line != "\n":
-                        title_question_mark = False
-                        new_line = "<p>" + title_storage + "</p>"
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                        new_line = "<p>" + line
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                elif i == 3:
-                    if title_question_mark is True:
-                        new_line = "<h1>" + title_storage + "</h1>"
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                        new_line = "<p>" + line
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                else:
-                    if line == "\n":
-                        new_line = "</p>" + "<p>"
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
-                    else:
-                        new_line = line
-                        paragraphs.append(
-                            SSJ.convert_markdown(SSJ, new_line)
-                            if input_file.endswith(".md")
-                            else new_line
-                        )
+            paragraphs, title_question_mark = SSJ.line_by_line(SSJ, lines, input_file)
 
             output_name = input_file[: input_file.find(".")] + ".html"
 
-            print("new name:", output_name)
+            temp_temp = SSJ.template
 
-            self.write_out(output_name, paragraphs, title_question_mark)
+            self.edit_template(paragraphs, title_question_mark)
+
+            self.write_out(output_name)
+
+            SSJ.template = temp_temp
+
         except OSError as err:
             print("Error: " + str(err))
 
-    def write_out(self, output, paragraphs, title):
-        """writes all paragraphs to the HTML template, changes filename"""
+    def edit_template(self, paragraphs, title):
+        """
+        Replace the template HTML with the newly aquired
+        specifics to the most currently opened file
+        """
+        if title:
+            title_pos = SSJ.template.find("<title>") + len("<title>")
+
+            SSJ.template = (
+                SSJ.template[:title_pos]
+                + paragraphs[0][4:-5]
+                + SSJ.template[title_pos:]
+            )
+
+        pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
+
+        for paragraph in reversed(paragraphs):
+            SSJ.template = SSJ.template[:pos] + paragraph + SSJ.template[pos:]
+
+    def write_out(self, output):
+        """writes edited template to output file"""
         try:
             if self.output:
                 with open(self.output / output, "w", encoding="utf-8") as file_out:
 
-                    temp_temp = SSJ.template
-
-                    if title:
-                        SSJ.template = SSJ.template.replace(
-                            "Filename", paragraphs[0][4:-5]
-                        )
-
-                    pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
-
-                    for paragraph in reversed(paragraphs):
-                        SSJ.template = (
-                            SSJ.template[:pos] + paragraph + SSJ.template[pos:]
-                        )
-
                     file_out.write(SSJ.template)
-                    SSJ.template = temp_temp
 
         except OSError as err:
             print("Error: " + str(err))
@@ -156,11 +103,8 @@ class SSJ:
         """Looks through directory, adds valid files to navbar then sends them to be converted"""
         input_folder = input_name
 
-        print(self.defaultOutputFolder)
         # retrieve every txt file in dir omitting other dirs
         onlyfiles = [f for f in listdir(input_name) if isfile(join(input_name, f))]
-
-        print(onlyfiles)
 
         SSJ.template = SSJ.template.replace("Filename", "Index Page")
 
@@ -201,7 +145,7 @@ class SSJ:
                     + "<"
                     + tag
                     + ">"
-                    + new_line[match.span()[1] :]
+                    + new_line[match.span()[0] + ind_chars :]
                 )
             else:
                 new_line = (
@@ -257,3 +201,78 @@ class SSJ:
             arr_of_str[0] = Path("./output")
 
         return arr_of_str
+
+    def line_by_line(self, lines, input_file):
+        """
+        Convert line by line and
+        seperate them into paragraphs
+        Returns Tuple consisting of
+        List of Paragraphs
+        Bool whether title is found
+        """
+        paragraphs = []
+        title_question_mark = True
+        for i, line in enumerate(lines):
+            if i == 0:
+                title_storage = line
+            elif i == 1:
+                if line != "\n":
+                    title_question_mark = False
+                    new_line = "<p>" + title_storage + "</p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+                    new_line = "<p>" + line + "</p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+            elif i == 2:
+                if line != "\n":
+                    title_question_mark = False
+                    new_line = "<p>" + title_storage + "</p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+                    new_line = "<p>" + line + "</p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+            elif i == 3:
+                if title_question_mark is True:
+                    new_line = "<h1>" + title_storage + "</h1>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+                    new_line = "<p>" + line + "</p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+            else:
+                if line == "\n":
+                    new_line = "</p>" + "<p>"
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+                else:
+                    new_line = line
+                    paragraphs.append(
+                        SSJ.convert_markdown(SSJ, new_line)
+                        if input_file.endswith(".md")
+                        else new_line
+                    )
+
+        return paragraphs, title_question_mark
