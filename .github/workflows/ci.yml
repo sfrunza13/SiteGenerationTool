@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v3
-        - name: Set up Python 3
+        - name: Set up Python ${{ matrix.python-version }}
           uses: actions/setup-python@v4
           with:
             python-version: 3.11
@@ -16,7 +16,7 @@ jobs:
             pip install -r requirements-dev.txt
         - name: Lint with PyLint
           run: |
-            find . -name 'src/*.py' -exec pylint {} \;
+            find . -name 'src/*.py' -exec pylint --fail-under=10 {} \;
         - name: Check formatting with black
           uses: psf/black@stable
           with:
@@ -24,4 +24,4 @@ jobs:
             options: "--check --verbose"
         - name: Run unit tests
           run: |
-            pytest -ra --cov
+            pytest
