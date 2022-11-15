@@ -18,10 +18,8 @@ jobs:
           run: |
             pylint src --fail-under=10
         - name: Check formatting with black
-          uses: black
-          with:
-            src: ". tests/"
-            options: "--check --verbose"
+          run: | 
+            black src/ tests/ --check --verbose
         - name: Run unit tests
           run: |
             pytest
