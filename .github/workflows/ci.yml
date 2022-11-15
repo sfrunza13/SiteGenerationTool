@@ -21,7 +21,7 @@ jobs:
           uses: psf/black@stable
           with:
             src: ". tests/"
-            options: "--check --verbose --cov"
+            options: "--check --verbose -ra --cov"
         - name: Run unit tests
           run: |
             pytest
