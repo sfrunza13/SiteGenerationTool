@@ -16,7 +16,7 @@ jobs:
             pip install -r requirements-dev.txt
         - name: Lint with PyLint
           run: |
-            pylint --fail-under=10
+            pylint src --fail-under=10
         - name: Check formatting with black
           uses: psf/black@stable
           with:
