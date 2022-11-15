@@ -12,7 +12,7 @@ def main(argv):
     """Main method, takes arguments, checks they're valid and sends them on to SSJ"""
 
     try:
-        # pylint: disable=unused-variable
+
         opts, args = getopt.getopt(
             argv, "vhi:o:c:", ["version", "help", "input=", "output=", "config="]
         )
