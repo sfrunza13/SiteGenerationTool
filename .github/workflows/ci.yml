@@ -18,7 +18,7 @@ jobs:
           run: |
             pylint src --fail-under=10
         - name: Check formatting with black
-          uses: psf/black@stable
+          uses: black
           with:
             src: ". tests/"
             options: "--check --verbose"
