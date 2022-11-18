@@ -21,9 +21,7 @@ class SSJ:
 </head>
 <div class="navbar">
 </div>
-<body>
-  
-</body>
+<body></body>
 </html>"""
 
     def __init__(self, input_name=None, output=None):
@@ -75,13 +73,14 @@ class SSJ:
         specifics to the most currently opened file
         """
         if title:
-            title_pos = SSJ.template.find("<title>") + len("<title>")
+            # title_pos = SSJ.template.find("<title>") + len("<title>")
 
-            SSJ.template = (
-                SSJ.template[:title_pos]
-                + paragraphs[0][4:-5]
-                + SSJ.template[title_pos:]
-            )
+            # SSJ.template = (
+            #     SSJ.template[:title_pos]
+            #     + paragraphs[0][4:-5]
+            #     + SSJ.template[title_pos:]
+            # )
+            SSJ.template = SSJ.template.replace("Filename", paragraphs[0][4:-5])
 
         pos = SSJ.template.find(SSJ.token) + len(SSJ.token)
 
