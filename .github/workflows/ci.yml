@@ -16,10 +16,10 @@ jobs:
             pip install -r requirements-dev.txt
         - name: Lint with PyLint
           run: |
-            pylint src --fail-under=10
+            pylint src/super_site_generator_package --fail-under=10
         - name: Check formatting with black
           run: | 
-            black src/ tests/ --check --verbose
+            black src/super_site_generator_package tests/ --check --verbose
         - name: Run unit tests
           run: |
             pytest
