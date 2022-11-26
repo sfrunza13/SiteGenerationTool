@@ -1,6 +1,28 @@
 [tool.pytest.ini_options] 
 addopts = "-ra --cov"
 testpaths = ["tests"] 
-pythonpath = ['src']
+pythonpath = ['src/super_site_generator_package']
 
 
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "super_site_generator_package"
+version = "1.0.7"
+authors = [{name="Stefan Frunza", email="stefanfrunza@gmail.com"},]
+description = "Package for a simple site generator"
+requires-python=">=3.10"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"GitHub"="https://github.com/sfrunza13/SiteGenerationTool"
+
+[project.scripts]
+ssgen = "super_site_generator_package.main:main"
