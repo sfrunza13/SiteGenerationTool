@@ -48,7 +48,7 @@ To use simply open a console to the script's location and write <code>py src/sup
 <p>The pip package is currently located here: <i>https://test.pypi.org/project/super-site-generator-package/1.0.7/</i> and can be installed using: <code>pip install -i https://test.pypi.org/simple/ super-site-generator-package==1.0.7</code></p>
 
 
-<p>If you so choose you can test it out in a python virtual environement by running <code>py -m venv</code> and then <code>Scripts\activate</code>(on Windows) or <code>/bin/activate</code>(on basically everything else)</p>
+<p>If you so choose you can test it out in a python virtual environement by running <code>py -m venv</code> and then <code>Scripts\activate</code>(on Windows) or <code>/bin/activate</code>(on basically everything else). You could also just install it straight into the CLI without any of this as well following the next step.</p>
 
 <p>Ensure you have pip and that it is updated and try installing using <code>pip install -i https://test.pypi.org/simple/ super-site-generator-package==1.0.7</code></p>
 
