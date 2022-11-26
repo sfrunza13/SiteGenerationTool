@@ -11,6 +11,7 @@ def main():
     """Main method, sends sys.arg to parse"""
     take_args(sys.argv[1:])
 
+
 def parse_config_args(config_opts):
     """
     Checks what to do with arguments
@@ -26,8 +27,9 @@ def parse_config_args(config_opts):
             super_site_jen = SSJ(input_name)
     return super_site_jen
 
+
 def take_args(argv):
-    #stuff
+    # stuff
     """takes arguments, checks they're valid and sends them on to SSJ"""
 
     try:
@@ -67,6 +69,7 @@ def take_args(argv):
         super_site_jen.parse_file(super_site_jen.input_name)
     elif os.path.isdir(super_site_jen.input_name):
         super_site_jen.parse_dir(super_site_jen.input_name)
+
 
 def parse_arg(opts):
     """
